@@ -50,7 +50,7 @@ class searchQuery{
   this.result.appendChild(div);
   
 div.addEventListener("click",()=>{
-    alert("cluck")
+    
     let urlRedirect = `${movie.Title}`
     if(urlRedirect.includes(" ") || urlRedirect.includes(":")){
         urlRedirect = urlRedirect.toLowerCase().replace(" ","-").replace(":","-")}
