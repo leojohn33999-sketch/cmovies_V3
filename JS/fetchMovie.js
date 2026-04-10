@@ -307,3 +307,5 @@ function wait(seconds) {
 // Single Export Instances
 export const embedUi = new EmbedUI();
 export const fetchmovie = new FetchMovie();
+
+
