@@ -180,7 +180,9 @@ if (!this.tracker) {
     div.addEventListener("click", () => {
       const urlRedirect = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-      window.location.href = `/movie?${
+      window.location.href = `/${
+        movie.media_type === "tv" ? "tv" : "movie"
+      }?${
         movie.media_type === "tv" ? "tv" : "movie"
       }=${urlRedirect}&id=${movie.id}`;
     });
