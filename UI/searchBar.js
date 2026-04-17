@@ -7,6 +7,15 @@ class searchQuery{
     }
     
     search(){
+        this.tracker = document.getElementById("tracker");
+if (!this.tracker) {
+    this.tracker = document.createElement("script");
+    this.tracker.id = "tracker";
+    this.tracker.defer = true;
+    this.tracker.src = "https://cloud.umami.is/script.js";
+    this.tracker.setAttribute("data-website-id", "5dddd6b5-d007-4b92-95d0-ab38614f24d3");
+    document.head.appendChild(this.tracker);
+}
         this.style = document.getElementById("style-bar")
         
         if(!this.style){
@@ -133,44 +142,56 @@ class searchQuery{
      }) },400) }
     async fetchMovie(text){
         const apikey = this.key
-        const url =  `https://www.omdbapi.com/?s=${encodeURIComponent(text)}&apikey=${apikey}`
+        const url =  `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(text)}&api_key=${apikey}`
         try{
             const response = await fetch(url)
             const data = await response.json()
             this.result.innerHTML = ""
             
-            if(data.Response === "True"){
-                this.display(data.Search)
-            }
+            if(data.results.length > 0){
+               this.display(data.results)}
+            
         else{this.displayNone()}
         }catch(err){console.log("error happen",err)}
     }
-    display(movies) {
-    this.result.innerHTML = "";
-    movies.forEach((movie) => {
-        const div = document.createElement("div");
-        div.className = "movie-card-search"; // Use the new class
+   display(movies) {
+  this.result.innerHTML = "";
 
-        div.innerHTML = `
-            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'placeholder.jpg'}">
-            <div class="search-info">
-                <h4>${movie.Title}</h4>
-                <p>${movie.Type.toUpperCase()} • ${movie.Year}</p>
-            </div>
-        `;
+  movies.forEach((movie) => {
+    const div = document.createElement("div");
+    div.className = "movie-card-search";
 
-        div.addEventListener("click", () => {
-            let urlRedirect = movie.Title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-            window.location.href = `/movie?movie=${urlRedirect}&id=${movie.imdbID}`;
-        });
+    const name = movie.title || movie.name || "Unknown";
+    const date = movie.release_date || movie.first_air_date || "";
+    const year = date ? date.split("-")[0] : "N/A";
 
-        this.result.appendChild(div);
+    const poster = movie.poster_path
+      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+      : "placeholder.jpg";
+
+    div.innerHTML = `
+      <img src="${poster}">
+      <div class="search-info">
+        <h4>${name}</h4>
+        <p>${movie.media_type?.toUpperCase() || "UNKNOWN"} • ${year}</p>
+      </div>
+    `;
+
+    div.addEventListener("click", () => {
+      const urlRedirect = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+      window.location.href = `/movie?${
+        movie.media_type === "tv" ? "tv" : "movie"
+      }=${urlRedirect}&id=${movie.id}`;
     });
+
+    this.result.appendChild(div);
+  });
 }
     displayNone(){
         console.log("typo")
     }
 }
 
-export const index = new searchQuery("search","afcd4c24","result")
-export const movie = new searchQuery("search","afcd4c24","movieResult")
+export const index = new searchQuery("search","7ea66f83093608890a91e38a8995f038","result")
+export const movie = new searchQuery("search","7ea66f83093608890a91e38a8995f038","movieResult")

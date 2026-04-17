@@ -308,7 +308,7 @@ class streamUI {
             <p><span>Genres:</span> ${extraInfo.Genre || "N/A"}</p>
             <p><span>Released:</span> ${extraInfo.Released || "N/A"}</p>
             <p><span>Directors:</span> ${extraInfo.Director || "N/A"}</p>
-            <p><span>Casts:</span> ${extraInfo.Actors || "N/A"}</p>
+                    <p><span>Casts:</span> ${extraInfo.Actors || "N/A"}</p>
         `;
         return [html, extraInfo.imdbRating];
     }

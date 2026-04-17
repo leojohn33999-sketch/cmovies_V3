@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+  :root {
+        --brand-red: #e50914;
+        --bg-dark: #141414;
+        --control-bg: #252a34;
+        --icon-color: #8a96a3;
+        --highlight-blue: #ff4d4d;
+
+    --bg-black: #0F0F0F;
+    --surface-grey: #1A1A1A;
+    --text-white: #FFFFFF;
+    --text-muted: #A0A0A0;
+    --input-bg: #141414;
+--accent-gradient: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+    }
+
+    body {
+        background-color: #1a1a1a;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+    }
+
+    /* --- Navbar Styling --- */
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 5%;
+        
+    }
+
+    .browse-btn {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+        color: white;
+        text-decoration: none;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 14px;
+        gap: 8px;
+    }
+
+    .nav-logo {
+        height: 40px;
+        width: auto;
+          
+  backdrop-filter: blur(2px);
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    .profile-icon {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(to bottom, #ff4d4d, #b30000);
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* --- Video Player Styling --- */
+    .video-card {
+        width: 95%;
+            max-width: 900px;
+            margin: 40px auto 0;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+     }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        /* Standard Movie Aspect Ratio (16:9) */
+        aspect-ratio: 16 / 9; 
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures video fills the fixed area without gaps */
+    }
+
+    .play-overlay {
+        position: absolute;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .play-circle {
+        width: 70px;
+        height: 70px;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .play-circle i {
+        color: white;
+        font-size: 1.8rem;
+        padding-left: 5px;
+    }
+
+    /* --- Control Bar --- */
+    .controls-bar {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 30px;
+    }
+
+    .left-controls, .right-controls {
+        display: flex;
+        gap: 25px;
+    }
+
+    .controls-bar i {
+        color: var(--icon-color);
+        font-size: 1.3rem;
+        cursor: pointer;
+    }
+
+   
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+        .controls-bar { padding: 15px; gap: 15px; }
+        .play-circle { width: 50px; height: 50px; }
+        .browse-btn span { display: none; } /* Hide text on mobile */
+    }
+   #title{
+       position: relative;
+       margin-left: 30px;
+       margin-top: 20px;
+       
+   }
+    #player{
+       width: 100%;
+       height: 100%;
+       border: none;
+   }
+   i:hover{
+       color: #ff4d4d;
+   }
+   .server-section {
+    text-align: center;
+    margin: 30px auto;
+    color: #e0e0e0;
+    max-width: 500px;
+}
+
+.server-hint {
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+/* Container for the buttons */
+.server-switcher {
+    display: inline-flex;
+    background-color: #555; /* Dark grey side */
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.server-btn {
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: white;
+}
+
+/* Make sure your CSS matches the attribute being set */
+[data-server="active"] {
+    background-color: white;
+    color: #333;
+}
+
+/* Blue Cloud Icon for active state */
+[data-server="active"] i {
+    color: #ff4d4d;
+}
+
+/* Inactive Cloud Icon */
+.server-btn i {
+    font-size: 1.1rem;
+}
+
+.server-btn:active {
+    background-color: #666;
+}
+#movieResult {
+    position: absolute;
+    background: #1a1a1a; /* Dark surface */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 350px;
+    max-height: 400px; /* Use max-height instead of fixed height */
+    top: 110px;
+    justify-self: center;
+    border-radius: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Adds depth */
+    z-index: 100;
+    margin-top: 10px;
+    display: none;
+}
+
+/* Individual Movie Row */
+.movie-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.movie-card:hover {
+    background: rgba(255, 255, 255, 0.05); /* Subtle highlight */
+}
+
+/* Poster Image */
+.movie-poster {
+    width: 50px;
+    height: 70px;
+    border-radius: 8px;
+    object-fit: cover; /* Ensures image isn't distorted */
+    background: #333; /* Placeholder color while loading */
+}
+
+/* Text Container */
+.movie-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Meta Info (Type & Year) */
+.movie-meta {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Movie Title */
+.movie-title {
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.3;
+    /* Truncate long titles with ellipsis (...) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Custom Scrollbar for a "Pro" look */
+#movieResult::-webkit-scrollbar {
+    width: 6px;
+}
+#movieResult::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+.search-container {
+    background: var(--input-bg);
+    border: 1px solid var(--text-muted);
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.search-container input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding-left: 15px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.search-container input:focus { outline: none; }
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#searchContainer{
+    position: fixed;
+    z-index: 999;
+    border: 0px solid black;
+    top: 20px;
+    padding-top: 30px;
+    width: 100%;
+    
+    display: none;
+    justify-content:center;
+    justify-self: center;
+}
+.info_movie-card {
+  background-color: #1a232e;
+  width: 85%;
+  max-width: 450px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  margin-left: 15px;
+  margin-top: 40px;
+  padding:  16px;
+}
+
+.header { padding: 20px 20px 10px; }
+
+.info_h1 {
+  color: #fff;
+  margin: 0 0 10px 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.badges { display: flex; gap: 8px; }
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: white;
+  border: 1px solid #4a5568;
+}
+
+.imdb { background: #000; color: #f5c518; border-color: #f5c518; }
+.fab.fa-imdb { margin-right: 4px; }
+
+.description {
+  padding: 0 20px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px dotted #4a5568;
+  margin: 0 20px;
+}
+
+.content-wrapper {
+  display: flex;
+  padding: 20px;
+  gap: 15px;
+}
+
+.details { flex: 2; font-size: 0.9rem; }
+.details p { margin: 6px 0; line-height: 1.4; }
+.details span { color: #fff; }
+
+.poster-container {
+  flex: 1;
+  background-color: #2d3748; /* Placeholder color */
+  border-radius: 8px;
+  height: 180px;
+  overflow: hidden;
+}
+
+.poster-img { width: 100%; height: 100%; object-fit: cover; }
+
+.rating-footer {
+  background: linear-gradient(to right, #b30000, #ff4d4d);
+  padding: 10px;
+  font-size: 16px;
+  text-align: center;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.stars { font-size: 1.4rem; margin-bottom: 5px; }
+.stars .yellow { color: #ecc94b; }
+.stars .gray { color: #4a5568; }
+.rating-text { font-size: 0.9rem; }
+.section-title-liked {
+    margin-top: 40px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 20px;
+
+    text-align: center;
+}
+a{
+    color: inherit;
+    text-decoration: none;
+}
+
+/* The Scroll Container */
+.scroll-wrapper {
+    padding: 10px;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Movie Card Style */
+.movie-card-liked {
+    min-width: 180px;
+    max-width: 180px;
+    flex-shrink: 0;
+}
+
+.img-container-liked {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background-color: #2d3748; /* Placeholder color */
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.poster-liked {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hd-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    font-style: italic;
+    padding: 2px 6px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+}
+
+.movie-info-liked {
+    margin-top: 12px;
+}
+
+.meta-liked {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0 0 6px 0;
+}
+
+.movie-title-liked {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.3;
+}
+.loader, .loader_before {
+  font-size: 40px;
+  color: #db1620;
+  text-align: center;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  z-index: 999;
+}
+
+.loader,.loader_before i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+ #footer {
+        width: 100%;
+        background-color: #0F0F0F;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 60px 5% 30px 5%;
+        margin-top: 50px; /* Provides breathing room from content above */
+        box-sizing: border-box;
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+
+    #request_info {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+
+    #request_info span {
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        color: var(--text-white);
+    }
+
+    #request_info span:hover {
+        color: var(--brand-red);
+    }
+
+    #footer p {
+        max-width: 600px;
+        margin: 0 auto 40px auto;
+        line-height: 1.8;
+        opacity: 0.7;
+    }
+
+    #bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    #bottom img {
+        filter: grayscale(1); /* Matches professional muted look */
+        opacity: 0.6;
+        transition: 0.3s;
+    }
+
+    #bottom img:hover {
+        filter: grayscale(0);
+        opacity: 1;
+    }
+
+    #bottom span {
+        font-size: 12px;
+        color: #555;
+    }
+    /* Full page loader for fetching data */
+#fetch-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0f0f0f;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+#fetch-overlay .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(229, 9, 20, 0.2);
+    border-top: 3px solid var(--brand-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+/* Spinner specifically inside the video container */
+.video-container .loader {
+    position: absolute;
+    z-index: 5;
+    background: black;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#remove_iframe{
+    position: fixed;
+    z-index: 9999;
+    top: 10px;
+    right: 10px;
+    color: #8a96a3;
+    font-size: 12px;
+    display: none;
+}
+/*stream ui*/
+
+  .video-card-stream {
+            width: 95%;
+            max-width: 900px;
+            margin: 40px auto 0;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+        }
+
+        .video-container-stream {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .video-main-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+
+        #subtitle-display-stream {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            text-align: center;
+            color: #ffffff;
+            font-size: 0.5rem;
+            font-weight: 300;
+            line-height: 1.4;
+            text-shadow: 0px 0px 5px #000, 0px 0px 10px #000;
+            pointer-events: none;
+            z-index: 9;
+            display: none;
+        }
+
+        .center-overlay-stream {
+            position: absolute;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.2);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .center-overlay-stream i { font-size: 30px; color: white; }
+
+        .controls-wrapper-stream {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.95));
+            padding: 25px 15px 10px;
+            z-index: 11;
+            transition: opacity 0.4s ease;
+        }
+
+        .hide-ui-stream {
+            opacity: 0;
+            cursor: none;
+        }
+
+        .progress-area-stream {
+            height: 5px;
+            width: 98%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 auto 15px;
+            cursor: pointer;
+            border-radius: 10px;
+            position: relative;
+            transition: height 0.1s ease;
+        }
+
+        .progress-area-stream:hover {
+            height: 8px;
+        }
+
+        .progress-filled-stream {
+            height: 100%;
+            width: 0%;
+            background: var(--brand-red);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .progress-filled-stream::after {
+            content: "";
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 12px;
+            width: 12px;
+            background: var(--brand-red);
+            border-radius: 50%;
+            display: none;
+        }
+
+        .progress-area-stream:hover .progress-filled-stream::after {
+            display: block;
+        }
+
+        .controls-main-stream {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .btn-icon-stream {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-icon-stream:hover { color: var(--brand-red); }
+
+        .time-stamp-stream { font-size: 14px; margin-left: 10px; color: #ddd; }
+
+        .meta-bar-stream {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 25px;
+            background-color: #1a1a1a;
+        }
+
+        .meta-bar-stream i { color: #8a96a3; font-size: 1.2rem; cursor: pointer; }
+
+        .progress-area-stream.active-stream .progress-filled-stream::after {
+            display: block;
+            transform: translateY(-50%) scale(1.5);
+        }
+
+        .no-transition-stream {
+            transition: none !important;
+        }
+
+        .video-loader-stream {
+            position: absolute;
+            z-index: 12;
+            display: none;
+            font-size: 30px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .loading-active-stream .video-main-stream {
+            filter: brightness(0.7);
+        }
+        .video-settings-card {
+   position: absolute;
+   
+  display:none;
+  width: 100%;
+  height: 100%;
+  max-height: 220px;
+  max-width: 320px;
+ bottom: 0;
+ right: 0;
+ z-index:999;
+  background: #1a1a1a ;
+  color: #ffffff ;
+  border-radius: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+ .video-settings-card::-webkit-scrollbar {
+    width: 6px;
+}
+.video-settings-card::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+/* Header & Icons */
+}
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-bottom: 1px solid #333;
+}
+
+.nav-icons { display: flex; gap: 20px; }
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #aaaaaa;
+  font-size: 18px;
+  cursor: pointer;
+  padding-bottom: 5px;
+}
+
+.icon-btn.active {
+  color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* List Styling */
+.settings-list {
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+}
+
+.setting-item {
+  padding: 12px 25px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #aaaaaa;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.setting-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.setting-item.active {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* The dot before the active item */
+.setting-item.active::before {
+  content: "•";
+  margin-right: 8px;
+  margin-left: -15px;
+}
+.selector-container {
+    padding: 10px;
+  display: flex;
+  gap: 15px; /* Space between the two buttons */
+  width: 95%;
+  max-width: 600px; /* Optional: limits the stretch width */
+}
+
+.dropdown-wrapper {
+  position: relative;
+   flex:1;/* This makes both divs stretch equally to fill the container */
+}
+
+.custom-select {
+  width: 100%;
+  appearance: none; /* Removes default browser styling */
+  -webkit-appearance: none;
+  background-color: #000; /* Blueish-grey color from image */
+  color: #9fb3c8; /* Light text color */
+  padding: 12px 20px;
+  border-radius: 50px; /* Makes it pill-shaped */
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Creating the custom chevron/arrow */
+.arrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  background-color: #9fb3c8;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%); /* Creates a triangle */
+  pointer-events: none;
+}
+
+.custom-select:focus {
+  background-color: #364b63;
+}
+
+
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="/home" class="browse-btn">
+            <i class="fa-solid fa-play"></i>
+            <b>Browse</b>
+        </a>
+    </div>
+
+    <div class="nav-center">
+        <img src="/IMG/logo_m.png" alt="Logo" class="nav-logo">
+    </div>
+
+    <div class="nav-right">
+        <button class="icon-btn search-btn" id="search-b">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <div class="profile-icon">
+            <i class="fa-solid fa-face-smile"></i>
+        </div>
+    </div>
+</nav>
+
+
+<div id="searchContainer">
+    <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search for movies, actors, or genres..." id="search" autocomplete="off">
+    </div>
+</div>
+<div id="movieResult"></div>
+<div class="loader_before"></div>
+      <h3 id="title"></h3>
+            <div class="video-card">
+                <div class="selector-container">
+  <div class="dropdown-wrapper">
+    <select class="custom-select" id="seasons">
+   </select>
+    <span class="arrow"></span>
+  </div>
+
+  <div class="dropdown-wrapper">
+    <select class="custom-select" id="eposides">
+      </select>
+    <span class="arrow"></span>
+  </div>
+</div>
+
+                <div class="video-container" style="position: relative; background: #000; overflow: hidden;">
+                    <div id="iframe-backdrop" style=" position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://image.tmdb.org/t/p/w1280${data.results.backdrop_path}') center/cover no-repeat; z-index: 5; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);  display: flex; align-items: center; justify-content: center;
+ ">
+                        <div class="video-loader" id="iframe-spinner">
+                            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #fff;"></i>
+                        </div>
+                    </div>
+                    
+                    <iframe id="player" class="iframe"  
+                        allowfullscreen allow="autoplay; encrypted-media" style="position: relative; z-index: 1;"></iframe>      
+                </div>
+                <div class="controls-bar">
+                    <div class="left-controls">
+                        <div id="share"><i class="fa-solid fa-share-nodes highlight" style="color:#8a96a3; cursor:pointer;"></i></div>
+                        <i class="fa-solid fa-forward-step highlight"></i>
+                    </div>
+                    
+                    <div class="right-controls">
+                        <div id="store"><i class="fa-solid fa-bookmark" style="cursor:pointer;"></i></div>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="server-section">
+                <p class="server-hint">If the current server is not working, try switching servers.</p>
+                <div class="server-switcher">
+                    <button id="server_1" class="server-btn active" data-server="active">
+                        <i class="fa-solid fa-cloud"></i><span>Server 1</span>
+                    </button>
+                    <button id="server_2" class="server-btn">
+                        <i class="fa-solid fa-cloud"></i><span>Server 2</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info_movie-card">
+               
+            </div>
+
+            <div class="recommendation-container">
+                <h2 class="section-title-liked">You may also like</h2>
+                <div class="scroll-wrapper"></div>
+            </div>
+
+  <footer id="footer">
+                <div id="request_info">
+                    <span>Request</span>
+                    <span>Contact</span>
+                </div>
+                <p>
+                    <strong>Coinresty</strong> is your destination for free high-quality movies and TV shows. 
+                    Dive into seamless streaming without the hassle of subscriptions or hidden fees.
+                </p>
+                <div id="bottom">
+                    <img src="/IMG/logo_m.png" alt="Coinresty Logo" width="40" height="40">
+                    <span>&copy; 2026 Coinresty Streaming. All rights reserved.</span>
+                </div>
+            </footer>
+
+<script type="module">
+import {auth} from "/JS/auth.js"
+    auth(document.querySelector(".profile-icon"))
+ const loaders = document.querySelector(".loader_before")
+  //  import { fetchmovie } from "/test_2/fetchMovie.js";
+    import { movie } from "/UI/searchBar.js";
+    
+    movie.search();
+  //  await fetchmovie.fetchWorker();
+class FetchTv {
+    constructor() {
+        this.WORKER = "https://worker-tv-2.1262sbmdj27dj.workers.dev/";
+        const param = new URLSearchParams(window.location.search);
+        this.tvId = param.get("id");
+        if(!this.tvId)return window.location.href ="/home"
+        this.fetchWorker();
+    }
+
+    async fetchWorker() {
+        try {
+            const res = await fetch(`${this.WORKER}?id=${this.tvId}`);
+            const data = await res.json();
+            this.display(data);
+        } catch (error) {
+            console.error("Fetch Error:", error);
+        }
+    }
+
+    async display(tv) {
+        this.tv = tv;
+        // Logic to sync UI and Iframe
+
+        this.seasonsSwitch(this.tv, "seasons", "eposides");
+        this.displayEss(this.tv, await this.loadExtra(this.tv));
+        this.displayIframe(this.tv, "player", "iframe-backdrop");
+          const s1 = document.getElementById("server_1");
+        const s2 = document.getElementById("server_2");
+        const currentServer = localStorage.getItem("server") || "server_1";
+
+        // Set initial active state based on localStorage
+        if (currentServer === "server_2") {
+            s2.setAttribute("data-server", "active");
+            s1.removeAttribute("data-server");
+        } else {
+            s1.setAttribute("data-server", "active");
+            s2.removeAttribute("data-server");
+        }
+
+        s1.addEventListener("click", (e) => this.serverChange(e, this.tv));
+        s2.addEventListener("click", (e) => this.serverChange(e, this.tv));
+    }
+     
+    serverChange(event, data) {
+        const serverId = event.currentTarget.id;
+        const iframe = document.getElementById("player");
+        const backdrop = document.getElementById("iframe-backdrop");
+        const s1 = document.getElementById("server_1");
+        const s2 = document.getElementById("server_2");
+
+        localStorage.setItem("server", serverId);
+        
+        // Get current progress safely
+        const currentPLAY = localStorage.getItem(data.title) || "1 1";
+        const [s, e] = currentPLAY.split(" ");
+
+        backdrop.style.display = "flex";
+
+        // Update UI Tabs
+        if (serverId === "server_1") {
+            s1.setAttribute("data-server", "active");
+            s2.removeAttribute("data-server");
+            iframe.src = `${data.embed}/${s}/${e}`;
+        } else {
+            s2.setAttribute("data-server", "active");
+            s1.removeAttribute("data-server");
+            iframe.src = `${data.embed2}/${s}/${e}`;
+        }
+    }
+
+
+    async displayEss(data, infOmdb) {
+        document.getElementById("title").innerHTML = data.title;
+        document.querySelector(".info_movie-card").innerHTML = `
+            <div class="header">
+                <h1 class="info_h1">${data.title}</h1>
+                <div class="badges">
+                    <span class="badge gray">HD</span>
+                    <span class="badge gray">TV</span>
+                    <span class="badge gray">${data.results.first_air_date.split("-")[0]}</span>
+                </div>
+            </div>
+            <p class="description">${data.results.overview}</p>
+            <hr class="divider">
+            <div class="content-wrapper">
+                <div class="poster-container">
+                    <img src="https://image.tmdb.org/t/p/w500${data.results.poster_path}" class="poster-img">
+                </div>
+                <div class="details">${infOmdb[0]}</div>
+            </div>
+            <div class="rating-footer">
+                <div class="stars">${this.rate(data.results.vote_average)}</div>
+                <div class="rating-text"><strong>${infOmdb[1] || 'N/A'}</strong> of <strong>10</strong></div>
+            </div>`;
+
+        document.querySelector(".scroll-wrapper").innerHTML = await this.createRecommendation(data.similar);
+    }
+
+    displayIframe(data, element, backdropEL) {
+        const backdrop = document.getElementById(backdropEL);
+        const iframe = document.getElementById(element);
+        if (!iframe) return;
+
+        // ✅ Handle Backdrop
+        const bgPath = data.results.backdrop_path || data.backdrop_path;
+        const bg = bgPath ? `https://image.tmdb.org/t/p/w1280${bgPath}` : "";
+
+        backdrop.style.cssText = `
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${bg}') center/cover no-repeat;
+            z-index: 5; backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+        `;
+
+        // ✅ Get saved Season/Episode or default 1/1
+        const playingTv = localStorage.getItem(data.title);
+        let season = 1, episode = 1;
+        if (playingTv) {
+            const [s, e] = playingTv.split(" ").map(Number);
+            if (!isNaN(s)) season = s;
+            if (!isNaN(e)) episode = e;
+        }
+
+        // ✅ Server Logic: Check localstorage for "server"
+        const selectedServer = localStorage.getItem("server");
+        const baseUrl = selectedServer === "server_2" ? data.embed2 : data.embed;
+
+        // ✅ Update Iframe Source
+        if (baseUrl) {
+            iframe.src = `${baseUrl}/${season}/${episode}`;
+            backdrop.style.display = "flex";
+            iframe.onload = () => { backdrop.style.display = "none"; };
+            
+            // Handle Iframe Error / Blocked content
+            iframe.onerror = () => { console.error("Iframe failed to load."); };
+        }
+    }
+
+    async seasonsSwitch(data, seasonSelectId, episodeSelectId) {
+        const seasonSelect = document.getElementById(seasonSelectId);
+        const episodeSelect = document.getElementById(episodeSelectId);
+        if (!seasonSelect || !episodeSelect) return;
+
+        const savedData = localStorage.getItem(data.title);
+        let [savedS, savedE] = savedData ? savedData.split(" ").map(Number) : [1, 1];
+
+        seasonSelect.innerHTML = data.seasons_info.map(s => `
+            <option value="${s.season}">${s.season === 0 ? 'Specials' : 'Season ' + s.season}</option>
+        `).join('');
+
+        const updateEpisodesUI = (seasonNum, targetEpisode) => {
+            const seasonObj = data.seasons_info.find(s => s.season === seasonNum);
+            if (!seasonObj) return;
+
+            episodeSelect.innerHTML = Array.from({ length: seasonObj.episodes }, (_, i) => i + 1)
+                .map(num => `<option value="${num}">Episode ${num}</option>`).join('');
+
+            episodeSelect.value = (targetEpisode <= seasonObj.episodes) ? targetEpisode : 1;
+            window.ssId = seasonObj;
+        };
+
+        const updateAndPlay = () => {
+            const s = seasonSelect.value;
+            const e = episodeSelect.value;
+            localStorage.setItem(data.title, `${s} ${e}`);
+            // Trigger iframe update whenever selection changes
+            this.displayIframe(data, "player", "iframe-backdrop");
+        };
+
+        seasonSelect.onchange = () => {
+            updateEpisodesUI(parseInt(seasonSelect.value), 1); // Reset to ep 1 on season change
+            updateAndPlay();
+        };
+
+        episodeSelect.onchange = () => {
+            updateAndPlay();
+        };
+
+        // Init UI
+        seasonSelect.value = savedS;
+        if (seasonSelect.selectedIndex === -1) seasonSelect.selectedIndex = 0;
+        updateEpisodesUI(parseInt(seasonSelect.value), savedE);
+    }
+
+    // ... (rest of your existing rate, loadExtra, createRecommendation, and getMovie functions remain unchanged)
+    rate(stars) {
+        let rating = Math.round(stars / 2);
+        let html = "";
+        for (let i = 1; i <= 5; i++) {
+            html += `<i class="fas fa-star ${i <= rating ? 'yellow' : 'gray'}"></i>`;
+        }
+        return html;
+    }
+
+    async loadExtra(data) {
+        const extraInfo = await this.getMovie(data.title);
+        if (!extraInfo || extraInfo.Response === "False") return ["<p>No extra info available</p>", "N/A"];
+        return [`
+            <p><span>Country:</span> ${extraInfo.Country || "N/A"}</p>
+            <p><span>Genres:</span> ${extraInfo.Genre || "N/A"}</p>
+            <p><span>Released:</span> ${extraInfo.Released || "N/A"}</p>
+            <p><span>Directors:</span> ${extraInfo.Director || "N/A"}</p>
+            <p><span>Casts:</span> ${extraInfo.Actors || "N/A"}</p>
+        `, extraInfo.imdbRating];
+    }
+
+    async createRecommendation(data) {
+        if (!data || !Array.isArray(data)) return "";
+        let html = "";
+        data.forEach(datarec => {
+            const title = datarec.name || datarec.title || "Unknown";
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+            const poster = datarec.poster_path ? `https://image.tmdb.org/t/p/w500${datarec.poster_path}` : '';
+            const year = datarec.first_air_date ? datarec.first_air_date.split("-")[0] : "N/A";
+            html += `<a href="/tv?${slug}&id=${datarec.id}">
+                <div class="movie-card-liked">
+                    <div class="img-container-liked"><img src="${poster}" class="poster-liked"></div>
+                    <div class="movie-info-liked"><p>${year}</p><h3>${title}</h3></div>
+                </div></a>`;
+        });
+        return html;
+    }
+
+    async getMovie(title) {
+        const apikey = "afcd4c24";
+        try {
+            const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apikey}`);
+            return await res.json();
+        } catch (err) { return null; }
+    }
+}
+const tvRun = new FetchTv();
+
+  
+   loaders.style.display="none"
+    let bodyClickListener = null;
+
+    document.querySelector("#search-b").addEventListener("click", (e) => {
+        // --- KEY FIX START ---
+        e.stopPropagation(); // Prevents the body listener from firing immediately
+        // --- KEY FIX END ---
+
+        const searchBody = document.getElementById("searchContainer");
+        const displayBar = document.getElementById("movieResult");
+        
+        searchBody.style.display = "grid";
+        displayBar.style.display = "block";
+        
+        if (bodyClickListener) {
+            document.removeEventListener("click", bodyClickListener);
+        }
+        
+        bodyClickListener = (event) => {
+            const searchContainer = document.getElementById("searchContainer");
+            const movieResult = document.getElementById("movieResult");
+            const searchButton = document.querySelector("#search-b");
+            
+            // If the click is NOT inside the search box AND NOT inside the results AND NOT the button
+            if (!searchContainer.contains(event.target) && 
+                !movieResult.contains(event.target) && 
+                !searchButton.contains(event.target)) {
+                
+                searchContainer.style.display = "none";
+                movieResult.style.display = "none";
+                
+                document.removeEventListener("click", bodyClickListener);
+                bodyClickListener = null;
+            }
+        };
+        
+        // Use document instead of document.body for better coverage
+        document.addEventListener("click", bodyClickListener);
+    });
+    
+    
+    
+</script>
+
+
+
+</body>
+</html>
