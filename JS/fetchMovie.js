@@ -42,7 +42,6 @@ class streamUI {
         <div class="video-card-stream">
         <div class="video-container-stream" id="videoContainer-stream">
             <video id="mainVideo-stream" class="video-main-stream" 
-                src="${Object.values(this.movie.embed[1])[0]}"
                 poster="https://image.tmdb.org/t/p/w1280${this.movie.backdrop}">
             </video>
                         <div class="video-settings-card">
@@ -111,6 +110,7 @@ class streamUI {
 
     }
     async display(infOmdb, recommended) {
+        console.log(infOmdb)
         const div = document.createElement("div");
         div.id = "whole-cointaner"
         div.innerHTML = `
@@ -135,7 +135,7 @@ class streamUI {
                     <h1 class="info_h1">${this.movie.title}</h1>
                     <div class="badges">
                         <span class="badge gray">HD</span>
-                        <span class="badge gray">PG-13</span>
+                        <span class="badge gray">${infOmdb[1].Rated}</span>
                         <span class="badge gray">${this.movie.info.release_date.split("-")[0]}</span>
                     </div>
                 </div>
@@ -148,8 +148,8 @@ class streamUI {
                     <div class="details">${infOmdb[0]}</div>
                 </div>
                 <div class="rating-footer">
-                    <div class="stars">${this.rate(this.movie.info.vote_average)}</div>
-                    <div class="rating-text"><strong>${infOmdb[1] || 'N/A'}</strong> of <strong>10</strong></div>
+                    <div class="stars">${this.rate(infOmdb[1].imdbRating)}</div>
+                    <div class="rating-text"><strong>${infOmdb[1].imdbRating || 'N/A'}</strong> of <strong>10</strong></div>
                 </div>
             </div>
 
@@ -181,10 +181,17 @@ class streamUI {
 
         // --- Logic for Iframe Loader ---
 
-        const module = await import("/UI/video.js");
-        const Player = module.videoPlayer;
-        // If order matters, specify the keys:
-        new Player(Object.values(this.movie.embed), this.movie.ccurl);
+          try {
+            const module = await import("/UI/video.js");
+            // Access the named export directly
+            const PlayerClass = module.videoPlayer;
+            new PlayerClass(
+                this.movie, 
+                this.movie.ccurl
+            );
+        } catch (err) {
+            console.error("Failed to load video player logic:", err);
+        }
 
         const saveM = document.getElementById("saveM")
         saveM.onclick = async () => {
@@ -310,7 +317,7 @@ class streamUI {
             <p><span>Directors:</span> ${extraInfo.Director || "N/A"}</p>
                     <p><span>Casts:</span> ${extraInfo.Actors || "N/A"}</p>
         `;
-        return [html, extraInfo.imdbRating];
+        return [html, extraInfo];
     }
 
     async createRecommendation(movies) {
@@ -365,12 +372,15 @@ class streamUI {
             controler.innerHTML = this.videoUi
 
             this.videoTapcount = 0
-            try {
+try {
                 const module = await import("/UI/video.js");
-                const Player = module.videoPlayer;
+const Player = module.videoPlayer;
 
-
-                new Player(this.movie.embed);
+// Re-initialize with the full embed data
+new Player(
+    this.movie,
+    this.movie.ccurl
+);
                 const saveM = document.getElementById("saveM")
                 saveM.onclick = async () => {
                     const { saveF } = await import("/JS/home.js")

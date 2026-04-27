@@ -1,9 +1,9 @@
+
 export class videoPlayer {
-    constructor(quality,ccurl) {
-        console.log(ccurl)
-        // Updated IDs with -stream
-      this.videoQualitys = quality;
-      this.ccurl = ccurl
+    constructor(data, ccurl) {
+        this.hls = null;
+        this.data = data.embed;
+        this.ccurl = ccurl;
         this.video = document.getElementById("mainVideo-stream");
         this.container = document.getElementById("videoContainer-stream");
         this.subtitle = document.getElementById("subtitle-stream");
@@ -17,22 +17,51 @@ export class videoPlayer {
         this.displayTime = document.getElementById("duration-stream");
         
         this.hideTimeout = null;
-        this.subtitles = []; // Initialize as empty array
-        this.cc = true;      // Default CC to on
-        console.log(this.ccurl)
+        this.subtitles = [];
+        this.cc = true;
+
         this.fetchSubtitles(this.ccurl);
-        
-        // Initial setup
-        this.video.muted = true;
-        this.video.autoplay = true;
         this.video.controls = false;
         
         this.initEvents();
-        this.video.play();
-        this.iconSound.className = "fa-solid fa-volume-xmark";
-        
+        this.hlsSetUp();
     }
+    
+    async hlsSetUp() {
+        if (this.hls) this.hls.destroy();
+        this.video.pause();
+        this.video.src = "";
+        
+        const streamUrl = this.data.stream.playlist;
+        
+        if (Hls.isSupported()) {
+            this.hls = new Hls({
+                xhrSetup: (xhr) => {
+                    if (this.data.headers.token) {
+                        xhr.setRequestHeader('Authorization', `Bearer ${this.data.headers.token}`);
+                    }
+                }
+            });
 
+            this.hls.loadSource(streamUrl);
+            this.hls.attachMedia(this.video);
+
+            this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                // Store levels array globally, not just level index
+                window.hlsLevels = this.hls.levels;
+                window.currentHLS = this.hls;
+                
+                this.video.play().catch(e => console.log("Autoplay blocked"));
+            });
+
+            this.hls.on(Hls.Events.ERROR, (event, errorData) => {
+                if (errorData.fatal) {
+                    console.error("Fatal HLS error:", errorData.type);
+                }
+            });
+        }
+    }
+    
     initEvents() {
         this.playVideo();
         this.videoSound();
@@ -41,7 +70,6 @@ export class videoPlayer {
         this.setupScrubbing(); 
         this.setupKeyboard();
         
-        // Subtitle and Time Update Logic
         this.video.ontimeupdate = () => {
             this.updateTime();
             if (this.cc) {
@@ -49,16 +77,14 @@ export class videoPlayer {
             }
         };
 
-        // CC Toggle Button Fix
         this.ccEnable = document.getElementById("ccBtn-stream");
         this.ccEnable.onclick = () => {
-            this.cc = !this.cc; // Simple toggle
+            this.cc = !this.cc;
             if (!this.cc) {
-                // Immediately hide subtitle display when turned off
                 document.getElementById("subtitle-display-stream").style.display = "none";
-                this.ccEnable.style.color = "#888"; // Optional: dim the icon
+                this.ccEnable.style.color = "#888";
             } else {
-                this.ccEnable.style.color = "#fff"; // Optional: brighten the icon
+                this.ccEnable.style.color = "#fff";
             }
         };
 
@@ -88,12 +114,13 @@ export class videoPlayer {
             loader.style.display = "none";
             playBtn.style.display = "flex"; 
         };
-        this.setting = document.getElementById("setting-gear")
-if (this.setting) {
-    this.settingVideo(this.setting,this.videoQualitys,this.video,this.ccurl);
-} else {
-    console.error("Setting gear icon not found in DOM");
-}
+        
+        this.setting = document.getElementById("setting-gear");
+        if (this.setting) {
+            this.settingVideo(this.setting, this.video, this.ccurl);
+        } else {
+            console.error("Setting gear icon not found in DOM");
+        }
     }
 
     playVideo() {
@@ -219,26 +246,23 @@ if (this.setting) {
         }
     }
 
-parseVTT(data) {
-
-    const cleanedData = data.split(/\r?\n/).slice(5).join('\n');
-
-    const cues = [];
-    const blocks = cleanedData.split(/\r?\n\r?\n/); // Now parses the "trimmed" version
-    
-    blocks.forEach(block => {
-        const lines = block.split(/\r?\n/);
-        const timeLine = lines.find(l => l.includes('-->'));
+    parseVTT(data) {
+        const cleanedData = data.split(/\r?\n/).slice(5).join('\n');
+        const cues = [];
+        const blocks = cleanedData.split(/\r?\n\r?\n/);
         
-        if (timeLine) {
-            const [start, end] = timeLine.split(' --> ').map(t => this.timeToSeconds(t.trim()));
-            const text = lines.slice(lines.indexOf(timeLine) + 1).join('<br>');
-            cues.push({ start, end, text });
-        }
-    });
-    return cues;
-}
-
+        blocks.forEach(block => {
+            const lines = block.split(/\r?\n/);
+            const timeLine = lines.find(l => l.includes('-->'));
+            
+            if (timeLine) {
+                const [start, end] = timeLine.split(' --> ').map(t => this.timeToSeconds(t.trim()));
+                const text = lines.slice(lines.indexOf(timeLine) + 1).join('<br>');
+                cues.push({ start, end, text });
+            }
+        });
+        return cues;
+    }
 
     timeToSeconds(timeStr) {
         const parts = timeStr.split(':');
@@ -264,10 +288,8 @@ parseVTT(data) {
         }
     }
     
-        settingVideo(id,quality,element,cc) {
-            const video = element
-            const videoQuality = quality
-            const ccurl = cc
+    settingVideo(id, element, cc) {
+        const video = element;
         const container = document.querySelector(".video-settings-card");
         const cancel = document.querySelector(".close-btn");
         const wrapper = document.getElementById("wrap-video-setting");
@@ -286,100 +308,104 @@ parseVTT(data) {
                 nav_settings.forEach(i => i.classList.remove("active"));
                 item.classList.add("active");
 
-                // Use the local functions defined below
-                if (item.dataset.fun === "cc") cc();
-                else if (item.dataset.fun === "setting") setting();
-                else if( item.dataset.fun === "speed")speed();
+                if (item.dataset.fun === "cc") this.showCCSettings(wrapper);
+                else if (item.dataset.fun === "setting") this.showQualitySettings(wrapper);
+                else if (item.dataset.fun === "speed") this.showSpeedSettings(wrapper);
             };
         });
 
-        // Helper functions defined inside the method scope
-        function setting() {
-            
-            wrapper.innerHTML = `
-                <ul class="settings-list" id="resolution-list">
-                    <li class="setting-item" data-value="1080p">1080p</li>
-                    <li class="setting-item active" data-value="720p">720p</li>
-                    <li class="setting-item" data-value="360p">360p</li>
-                </ul>`;
-            attachItemListeners(); }
-
-        function cc() {
-            wrapper.innerHTML = `
-                <ul class="settings-list" id="resolution-list">
-                    <li class="setting-item" data-value="off">off</li>
-                    <li class="setting-item active" data-value="en">English</li>
-                </ul>`;
-             attachItemListeners();
-         
-        }
-
-        function speed() {
-            wrapper.innerHTML = `
-                <ul class="settings-list" id="resolution-list">
-                    <li class="setting-item" data-value="0.5">0.5x</li>
-                    <li class="setting-item active" data-value="1">1x</li>
-                    <li class="setting-item" data-value="1.5">1.5x</li>
-                    <li class="setting-item" data-value="2.5">2.5x</li>
-                </ul>`;
-            attachItemListeners();
-        }
-
-        function attachItemListeners() {
-            
-            const items = document.querySelectorAll('.setting-item');
-            items.forEach(item => {
-                item.addEventListener('click', () => {
-                    items.forEach(i => i.classList.remove('active'));
-                    localStorage.setItem("timePlay",video.currentTime)
-                    video.pause()
-                    item.classList.add('active');
-                    const value = item.getAttribute('data-value');
-                 // exucute 
-                 
-                 const quality = ["1080p","720p","360p"]
-                 const speed = ["0.5","1","1.5","2.5"]
-                 if(quality.includes(value)){
-                     
-                     console.log(Object.values(videoQuality[0])[0])
-                     
-                     let resolutions 
-                     = value === "1080p"?Object.values(videoQuality[0])[0]:
-                     value === "720p"?Object.values(videoQuality[1])[0]:
-                     Object.values(videoQuality[2])[0]
-                 
-                 video.src = resolutions
-                 video.currentTime = localStorage.getItem("timePlay"|| 0)
-                     video.play()  
-                 }
-                 else if(speed.includes(value)){
-                     video.pause()
-                     video.playbackRate = parseFloat(value)
-                     video.play()
-                 }
-                 
-                 
-                 
-                  
-                    
-                });
-            });
-
- }
- 
- 
- 
-
         // Initialize default view
-        setting();
-    } // End of settingVideo
- // End of videoPlayer Class
-
+        this.showQualitySettings(wrapper);
+    }
     
+    showQualitySettings(wrapper) {
+        // Clear wrapper
+        wrapper.innerHTML = '';
+        
+        const ul = document.createElement("ul");
+        ul.id = "resolution-list";
+        ul.className = "settings-list";
+        
+        // Add auto option
+        ul.innerHTML = `<li class="setting-item active" data-value="-1">Auto</li>`;
+        
+        // Add quality options from HLS levels
+        if (window.hlsLevels && window.hlsLevels.length > 0) {
+            window.hlsLevels.forEach((level, index) => {
+                const height = level.height || level.name ||  480;
+                ul.innerHTML += `
+                    <li class="setting-item" data-value="${index}">${height}p</li>
+                `;
+            });
+        }
+        
+        wrapper.appendChild(ul);
+        this.attachSettingListeners(wrapper);
+    }
     
+    showCCSettings(wrapper) {
+        wrapper.innerHTML = `
+            <ul class="settings-list" id="resolution-list">
+                <li class="setting-item" data-value="off">Off</li>
+                <li class="setting-item active" data-value="en">English</li>
+            </ul>`;
+        this.attachSettingListeners(wrapper);
+    }
     
+    showSpeedSettings(wrapper) {
+        wrapper.innerHTML = `
+            <ul class="settings-list" id="resolution-list">
+                <li class="setting-item" data-value="0.5">0.5x</li>
+                <li class="setting-item active" data-value="1">1x</li>
+                <li class="setting-item" data-value="1.5">1.5x</li>
+                <li class="setting-item" data-value="2">2x</li>
+            </ul>`;
+        this.attachSettingListeners(wrapper);
+    }
+    
+  attachSettingListeners(wrapper) {
+    const items = wrapper.querySelectorAll('.setting-item');
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            items.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            const value = item.getAttribute('data-value');
+            
+            // Check qualities FIRST (before speeds)
+            const qualities = ["1080", "720", "360", "480", "auto"];
+            const speeds = ["0.5", "1", "1.5", "2"];
+            
+            // 1. Check for quality first
+            if (item.innerHTML.includes("1080p")||item.innerHTML.includes("360p")||item.innerHTML.includes("720p")||item.innerHTML.includes("480p") ) {
+                // Quality change
+                let levelIndex = -1; // default auto
+                if(value){
+                levelIndex = parseInt(value) 
+                }
+                if (this.hls) {
+                    this.hls.currentLevel = levelIndex;
+                    console.log(`Quality changelevel.nal} (level ${levelIndex})`);
+                }
+            }
+            // 2. Check for speed
+            else if (speeds.includes(value)) {
+                this.video.playbackRate = parseFloat(value);
+                console.log(`Speed changed to: ${value}x`);
+            }
+            // 3. Check for subtitles
+            else if (value === "off") {
+                this.cc = false;
+                document.getElementById("subtitle-display-stream").style.display = "none";
+                console.log("Subtitles off");
+            }
+            else if (value === "en") {
+                this.cc = true;
+                console.log("Subtitles on");
+            }
+        });
+    });
+}
 }
 
 // Initialize
-export const player = new videoPlayer();
 
