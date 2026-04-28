@@ -411,12 +411,14 @@ new Player(
             s2.setAttribute("data-server", "active");
             s1.removeAttribute("data-server");
             controler.innerHTML = `
-              <div class="video-card">
+   <div class="video-card">
            
                 <div class="video-container" style="position: relative; background: #000; overflow: hidden;">
-                    <div id="iframe-backdrop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://image.tmdb.org/t/p/w1280${this.movie.info.backdrop_path}') center/cover no-repeat; z-index: 5;">
+                    <div id="iframe-backdrop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://image.tmdb.org/t/p/w1280${this.movie.info.backdrop_path}') center/cover no-repeat;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px); z-index: 5;">
                          <div class="video-loader-stream" id="iframe-spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: 10;">
-                            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #fff;"></i>
+                            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #fff;"></i>
                         </div>
                     </div>
                     <iframe id="player" class="iframe" src="${this.movie.embed2}" 

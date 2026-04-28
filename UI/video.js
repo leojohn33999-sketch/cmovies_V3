@@ -64,6 +64,23 @@ export class videoPlayer {
     
     initEvents() {
         this.playVideo();
+        this.overlay.ondblclick = (e) => 
+        {
+            const rect = this.overlay.getBoundingClientRect()
+            const x = e.clientX - rect.left
+            const width = rect.width
+            const skipTime = 10
+            if(x < width / 2){
+                this.video.currentTime = Math.max(0,this.video.currentTime - skipTime)
+                this.showSkipFeedback("backward")
+            }
+            else{
+                this.video.currentTime = Math.min(this.video.duration,this.video.currentTime + skipTime)
+                this.showSkipFeedback("forward")
+            }
+        }
+        
+        
         this.videoSound();
         this.expandVideo();
         this.setupFadeOut();
@@ -122,7 +139,15 @@ export class videoPlayer {
             console.error("Setting gear icon not found in DOM");
         }
     }
-
+showSkipFeedback = (direction) => {
+    const icon = direction === "forward" ? "fa-forward" : "fa-backward";
+    const feedback = document.createElement("div");
+    feedback.className = `skip-feedback ${direction}`;
+    feedback.innerHTML = `<i class="fa-solid ${icon}"></i><span>10s</span>`;
+    
+    this.container.appendChild(feedback);
+    setTimeout(() => feedback.remove(), 600)
+}
     playVideo() {
         this.overlay.onclick = () => {
             this.video.paused ? this.video.play() : this.video.pause();

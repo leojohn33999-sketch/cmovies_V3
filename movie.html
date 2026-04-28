@@ -905,6 +905,30 @@ a{
   margin-right: 8px;
   margin-left: -15px;
 }
+.skip-feedback {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 20px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeScale 0.6s ease-out;
+}
+
+.skip-feedback.backward { left: 15%; }
+.skip-feedback.forward { right: 15%; }
+
+@keyframes fadeScale {
+    0% { opacity: 0; transform: translateY(-50%) scale(0.5); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-50%) scale(1); }
+}
 
   </style>
 </head>
