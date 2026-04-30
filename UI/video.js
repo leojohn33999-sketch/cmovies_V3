@@ -35,13 +35,7 @@ export class videoPlayer {
         const streamUrl = this.data.stream.playlist;
         
         if (Hls.isSupported()) {
-            this.hls = new Hls({
-                xhrSetup: (xhr) => {
-                    if (this.data.headers.token) {
-                        xhr.setRequestHeader('Authorization', `Bearer ${this.data.headers.token}`);
-                    }
-                }
-            });
+            this.hls = new Hls({ enableWorker: true });
 
             this.hls.loadSource(streamUrl);
             this.hls.attachMedia(this.video);
