@@ -32,7 +32,7 @@ export class videoPlayer {
         this.video.pause();
         this.video.src = "";
         
-        const streamUrl = this.data.stream.playlist;
+        const streamUrl = this.data;
         
         if (Hls.isSupported()) {
             this.hls = new Hls({ enableWorker: true });
