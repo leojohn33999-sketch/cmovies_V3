@@ -3,7 +3,7 @@ export class videoPlayer {
     constructor(data, ccurl) {
         this.hls = null;
         this.data = data.embed;
-        this.ccurl = ccurl;
+        this.ccurl = ccurl || null;
         this.video = document.getElementById("mainVideo-stream");
         this.container = document.getElementById("videoContainer-stream");
         this.subtitle = document.getElementById("subtitle-stream");
