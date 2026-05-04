@@ -4,6 +4,7 @@ const WORKER = `https://demo-worker.1262sbmdj27dj.workers.dev/`;
 
 class FetchMovie {
     constructor() {
+        this.hls = null;
         // Fix: Get the ID from the actual URL search string
         const params = new URLSearchParams(window.location.search);
         this.movieId = params.get("id");
@@ -35,6 +36,7 @@ class FetchMovie {
     }
         }
 class streamUI {
+    
     async init(data) {
         this.movie = data
         this.videoTapcount = 0
@@ -114,7 +116,7 @@ class streamUI {
         const div = document.createElement("div");
         div.id = "whole-cointaner"
         div.innerHTML = `
-            <h3 id="title">${this.movie.title || 'Movie'}</h3>
+       
             <div id="wrap">
           ${this.videoUi}
     </div>
@@ -218,6 +220,7 @@ class streamUI {
         //run server change 
         var server = localStorage.getItem("server")
         if (server === "server_2") {
+            if (this.hls) hls.destroy ();
             const video = document.querySelector(".video-main-stream");
             const controler = document.querySelector("#wrap")
 
@@ -292,6 +295,7 @@ class streamUI {
             this.serverChange(e)
         });
         document.getElementById("server_2").addEventListener("click", (e) => {
+            if(this.hls) hls.destroy ();
             this.videoTapcount = 1
             this.serverChange(e)
         });
@@ -512,7 +516,7 @@ class EmbedUI {
     async display(infOmdb, recommended) {
         const div = document.createElement("div");
         div.innerHTML = `
-            <h3 id="title">${this.movie.title || 'Movie'}</h3>
+
             <div class="video-card">
                 <div class="video-container" style="position: relative; background: #000; overflow: hidden;">
                     <div id="iframe-backdrop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://image.tmdb.org/t/p/w1280${this.movie.info.backdrop_path}') center/cover no-repeat; z-index: 5; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;">

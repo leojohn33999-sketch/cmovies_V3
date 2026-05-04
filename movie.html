@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<script defer src="https://cloud.umami.is/script.js" data-website-id="5dddd6b5-d007-4b92-95d0-ab38614f24d3"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -118,9 +117,9 @@
     }
 
     .play-circle {
-        width: 70px;
-        height: 70px;
-        background: rgba(0, 0, 0, 0.4);
+        width: 50px;
+        height: 50px;
+        background: rgba(0, 0, 0, 0.0);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         border-radius: 50%;
@@ -131,7 +130,7 @@
 
     .play-circle i {
         color: white;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         padding-left: 5px;
     }
 
@@ -173,7 +172,7 @@
        border: none;
    }
    i:hover{
-       color: #ff4d4d;
+       color: whitesmoke;
    }
    .server-section {
     text-align: center;
@@ -695,9 +694,9 @@ a{
         .center-overlay-stream {
             position: absolute;
             z-index: 10;
-            background: rgba(0, 0, 0, 0.2);
-            width: 80px;
-            height: 80px;
+            background: rgba(0, 0, 0, 0.0);
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -706,7 +705,7 @@ a{
             transition: opacity 0.3s ease;
         }
 
-        .center-overlay-stream i { font-size: 30px; color: white; }
+        .center-overlay-stream i { font-size: 25px; color: white; }
 
         .controls-wrapper-stream {
             position: absolute;
@@ -929,7 +928,6 @@ a{
     50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
     100% { opacity: 0; transform: translateY(-50%) scale(1); }
 }
-
   </style>
 </head>
 
@@ -969,7 +967,7 @@ a{
 import {auth} from "/JS/auth.js"
     auth(document.querySelector(".profile-icon"))
  const loaders = document.querySelector(".loader_before")
-    import { fetchmovie } from "/JS/fetchMovie.js";
+    import { fetchmovie } from "/test_2/fetchMovie.js";
     import { movie } from "/UI/searchBar.js";
     
     movie.search();
@@ -1012,8 +1010,9 @@ import {auth} from "/JS/auth.js"
         
         // Use document instead of document.body for better coverage
         document.addEventListener("click", bodyClickListener);
-        
     });
+    
+    
     
 </script>
 

@@ -334,7 +334,7 @@ showSkipFeedback = (direction) => {
         });
 
         // Initialize default view
-        this.showQualitySettings(wrapper);
+        this.showSpeedSettings(wrapper);
     }
     
     showQualitySettings(wrapper) {
@@ -349,7 +349,7 @@ showSkipFeedback = (direction) => {
         ul.innerHTML = `<li class="setting-item active" data-value="-1">Auto</li>`;
         
         // Add quality options from HLS levels
-        if (window.hlsLevels && window.hlsLevels.length > 0) {
+        if (this.hls && this.hls.levels.length > 0) {
             window.hlsLevels.forEach((level, index) => {
                 const height = level.height || level.name ||  480;
                 ul.innerHTML += `
