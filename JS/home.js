@@ -108,13 +108,7 @@ export function popShow(text, color, bg, id, time) {
   document.head.appendChild(style);
   
   // Add Font Awesome and Google Fonts only if not present
-  if (!document.getElementById("fa-link")) {
-    const fa = document.createElement("link");
-    fa.id = "fa-link";
-    fa.rel = "stylesheet";
-    fa.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
-    document.head.appendChild(fa);
-  }
+  
   
   if (!document.querySelector('link[href*="fonts.googleapis.com"][href*="Inter"]')) {
     const gf = document.createElement("link");
