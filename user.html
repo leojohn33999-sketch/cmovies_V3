@@ -1,0 +1,813 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>my movies</title>
+  <style>
+    :root {
+      --brand-red: #e50914;
+      --bg-dark: #141414;
+      --control-bg: #252a34;
+      --icon-color: #8a96a3;
+      --highlight-blue: #ff4d4d;
+      --bg-black: #0F0F0F;
+      --surface-grey: #1A1A1A;
+      --text-white: #FFFFFF;
+      --text-muted: #A0A0A0;
+      --input-bg: #141414;
+      --accent-gradient: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+    }
+
+    body {
+      background-color: #1a1a1a;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      touch-action: manipulation;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      max-width: 800px;
+      margin: 10px auto;
+      padding: 6px 12px;
+      border-radius: 100px;
+      transition: all 0.3s ease;
+    }
+
+    @media (min-width: 400px) {
+      .navbar {
+        background: var(--input-bg, rgba(255, 255, 255, 0.1));
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+    }
+
+    .browse-btn {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+      color: white;
+      text-decoration: none;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 14px;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .nav-logo {
+      height: 40px;
+      width: auto;
+      backdrop-filter: blur(2px);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .profile-icon {
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(to bottom, #ff4d4d, #b30000);
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .user-bar {
+      background-color: #1e252b;
+      margin-top: 40px;
+      justify-self: center;
+      padding: 6px 12.5px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .user-item {
+      color: #57606a;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 10px;
+      border-radius: 50%;
+    }
+
+    .user-item.active {
+      background-color: #313d47;
+      color: var(--text-white);
+      padding: 10px 20px;
+      border-radius: 30px;
+    }
+
+    .user-item:hover:not(.active) {
+      color: #8b949e;
+    }
+    
+    @media (min-width:400px)and (max-width:1200px){
+    .user-bar{
+      font-size: 25px;
+    }
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .history-card {
+      background: #1e1e1e;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .history-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .history-poster {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+    }
+
+    .history-info {
+      padding: 12px;
+    }
+
+    .history-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-date {
+      font-size: 11px;
+      color: #888;
+      margin: 5px 0;
+    }
+
+    .play-btn {
+      background: var(--accent-gradient);
+      border: none;
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .empty-history {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .empty-history i {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .search-container {
+      display: none;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 12px 20px;
+      background: #2a2a2a;
+      border-radius: 50px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-container i {
+      color: #888;
+    }
+
+    .search-container input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #movieResult {
+      display: none;
+      max-width: 600px;
+      margin: 10px auto;
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .loader_before {
+      display: none;
+    }
+
+    #result {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      padding: 0 20px;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .clear-history-btn {
+      background: rgba(229, 9, 20, 0.8);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin: 0 20px 20px auto;
+      cursor: pointer;
+      display: block;
+      font-size: 14px;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="browse-btn">
+        <i class="fa-solid fa-play"></i>
+        <b>Browse</b>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <img src="/IMG/logo_m.png" alt="Logo" class="nav-logo" onerror="this.style.display='none'">
+    </div>
+
+    <div class="nav-right">
+      <button class="icon-btn search-btn" id="search-b">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <div class="profile-icon">
+        <i class="fa-solid fa-face-smile"></i>
+      </div>
+    </div>
+  </nav>
+
+  <div id="searchContainer">
+    <div class="search-container">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search for movies, actors, or genres..." id="search" autocomplete="on">
+    </div>
+  </div>
+
+  <div id="movieResult"></div>
+  <div class="loader_before"></div>
+
+  <div class="user-bar">
+    <div class="user-item" data-tab="profile"><i class="fas fa-user"></i></div>
+    <div class="user-item active" data-tab="history"><i class="fas fa-history"></i></div>
+    <div class="user-item" data-tab="bookmark"><i class="fas fa-bookmark"></i></div>
+    <div class="user-item" data-tab="notifications"><i class="fas fa-bell"></i></div>
+    <div class="user-item" data-tab="settings"><i class="fas fa-cog"></i></div>
+  </div>
+
+  <div id="result">
+    <h2 class="section-title">Watch History</h2>
+    <div id="historyContainer" class="history-grid"></div>
+  </div>
+
+  <!-- Load localforage first -->
+  <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+  
+  <script type="module">
+    // Initialize localforage
+    
+   import { movie } from "/UI/searchBar.js";
+    import {popShow} from "/JS/home.js"
+    movie.search();
+    import {supabase} from "/JS/supabaseJS.js"
+    import {auth} from"/JS/auth.js"
+    auth(document.querySelector(".profile-icon"))
+    // Global functions
+    window.resumeStream = async function(streamId) {
+      try {
+        const stream = await localforage.getItem(streamId.toString());
+        if (stream && stream.embed) {
+          window.open(`${window.location.search}/movie?id=${stream.id}`, '_blank');
+        } else if (stream && stream.ccurl) {
+          window.open(stream.ccurl, '_blank');
+        } else {
+          showNotification('Stream not found', 'error');
+        }
+      } catch (error) {
+        console.error('Error resuming stream:', error);
+        showNotification('Failed to load stream', 'error');
+      }
+    };
+
+    window.deleteFromHistory = async function(streamId, event) {
+      if (event) event.stopPropagation();
+      if (confirm('Remove this from history?')) {
+        await localforage.removeItem(streamId.toString());
+        loadHistory();
+        showNotification('Removed from history', 'success');
+      }
+    };
+
+    window.clearAllHistory = async function() {
+      if (confirm('Delete ALL watch history? This cannot be undone.')) {
+        try {
+          const keys = await localforage.keys();
+          let deletedCount = 0;
+          for (const key of keys) {
+            const item = await localforage.getItem(key);
+            if (item) {
+              await localforage.removeItem(key);
+              deletedCount++;
+            }
+          }
+          loadHistory();
+          showNotification(`Cleared ${deletedCount} items from history`, 'success');
+        } catch (error) {
+          console.error('Error clearing history:', error);
+          showNotification('Error clearing history', 'error');
+        }
+      }
+    };
+
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadHistory() {
+      addClearButton();
+      const container = document.getElementById('historyContainer');
+      if (!container) return;
+
+      try {
+        container.innerHTML = '<div class="empty-history"><i class="fas fa-spinner fa-spin"></i><h3>Loading history...</h3></div>';
+        
+        const keys = await localforage.keys();
+        const streams = [];
+        
+        for (const key of keys) {
+          const stream = await localforage.getItem(key);
+
+            streams.push(stream);
+        
+        }
+        
+        streams.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        
+        if (streams.length === 0) {
+          container.innerHTML = `
+            <div class="empty-history">
+              <i class="fas fa-history"></i>
+              <h3>No watch history yet</h3>
+              <p>Start watching movies to see them here!</p>
+            </div>
+          `;
+          return;
+        }
+
+        const posterBaseUrl = 'https://image.tmdb.org/t/p/w500';
+        
+        container.innerHTML = streams.map(stream => {
+          const posterPath = stream.info?.poster_path || stream.backdrop;
+          const posterUrl = posterPath ? posterBaseUrl + posterPath : 'https://via.placeholder.com/300x450?text=No+Poster';
+          const watchDate = stream.timestamp ? new Date(stream.timestamp).toLocaleDateString() : 'Recently watched';
+          
+          return `
+            <div class="history-card" onclick="resumeStream('${stream.id}')">
+              <img class="history-poster" src="${posterUrl}" alt="${escapeHtml(stream.title)}" 
+                   onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+              <div class="history-info">
+                <h3 class="history-title">${escapeHtml(stream.title)}</h3>
+                <p class="history-date">${watchDate}</p>
+                <button class="play-btn" onclick="event.stopPropagation(); resumeStream('${stream.id}')">
+                  <i class="fas fa-play"></i> Resume
+                </button>
+                <button class="play-btn" style="background:#666; margin-top:5px;" onclick="event.stopPropagation(); deleteFromHistory('${stream.id}', event)">
+                  <i class="fas fa-trash"></i> Remove
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+      } catch (error) {
+        console.error('Error loading history:', error);
+        container.innerHTML = '<div class="empty-history"><i class="fas fa-exclamation-triangle"></i><h3>Error loading history</h3><p>Please refresh the page</p></div>';
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return 'Unknown';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Tab switching
+    function setupTabs() {
+      const tabs = document.querySelectorAll('.user-item');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          const tabName = tab.getAttribute('data-tab');
+          const resultDiv = document.getElementById('result');
+          const titleElement = resultDiv.querySelector('.section-title');
+          
+          if (tabName === 'history') {
+            titleElement.textContent = 'Watch History';
+            loadHistory();
+          } else if (tabName === 'bookmark') {
+            titleElement.textContent = 'Saved Movies';
+          saved()
+          }else if(tabName === "profile"){
+            profile()
+          }
+          
+          else {
+            titleElement.textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            document.getElementById('historyContainer').innerHTML = `
+              <div class="empty-history">
+                <i class="fas fa-${tabName}"></i>
+                <h3>${tabName.charAt(0).toUpperCase() + tabName.slice(1)} section</h3>
+                <p>Coming soon...</p>
+              </div>
+            `;
+          }
+        });
+      });
+    }
+
+async function saved() {
+  const container = document.getElementById("historyContainer");
+  const posterBaseUrl = "https://image.tmdb.org/t/p/w500";
+
+  // ✅ STEP 1: Load localStorage instantly
+  let local = localStorage.getItem("favorites");
+  let localMovies = local ? JSON.parse(local) : [];
+
+  renderMovies(localMovies);
+
+  // ✅ STEP 2: Fetch Supabase in background
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("user_movies")
+      .select("favorite");
+
+    if (error) throw error;
+
+    // Extract JSON
+    let remoteMovies = data.flatMap(row => row.favorite);
+
+    // ✅ STEP 3: Merge + remove duplicates
+    let merged = mergeFavorites(localMovies, remoteMovies);
+
+    // ✅ Update UI + cache
+    renderMovies(merged);
+    localStorage.setItem("favorites", JSON.stringify(merged));
+
+  } catch (err) {
+    console.error("Supabase fetch error:", err);
+  }
+
+  // ✅ Render function
+  function renderMovies(movies) {
+    if (!movies.length) {
+      container.innerHTML = "<p style='text-align:center;'>No favorites yet</p>";
+      return;
+    }
+movies = movies.filter(m => m && m.id);
+    container.innerHTML = movies.map(movie => {
+      const posterUrl = movie.poster
+        ? posterBaseUrl + movie.poster
+        : "https://via.placeholder.com/300x450?text=No+Poster";
+
+      return `
+        <div class="history-card" onclick="resumeStream('${movie.id}')">
+          <img class="history-poster"
+               src="${posterUrl}"
+               alt="${escapeHtml(movie.title)}"
+               onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+
+          <div class="history-info">
+            <h3 class="history-title">${escapeHtml(movie.title)}</h3>
+
+            <button class="play-btn"
+              onclick="event.stopPropagation(); resumeStream('${movie.id}')">
+              ▶ Resume
+            </button>
+
+            <button class="play-btn"
+              style="background:#666; margin-top:5px;"
+              onclick="deleteFromFavorite('${movie.id}', event)">
+              🗑 Remove
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+}
+
+function mergeFavorites(local, remote) {
+  const map = new Map();
+
+  [...local, ...remote].forEach(movie => {
+    map.set(movie.id, movie);
+  });
+
+  return Array.from(map.values());
+}
+async function deleteFromFavorite(movieId, event) {
+  event.stopPropagation();
+
+  try {
+    // ✅ 1. Update localStorage instantly
+    let stored = localStorage.getItem("favorites");
+    let movies = stored ? JSON.parse(stored) : [];
+
+    movies = movies.filter(m => m.id !== movieId);
+    localStorage.setItem("favorites", JSON.stringify(movies));
+
+    saved(); // refresh UI
+
+    // ✅ 2. Get current Supabase row
+    const { data, error } = await supabase
+      .from("user-favorites")
+      .select("id, favorite")
+      .single();
+
+    if (error) throw error;
+
+    // ✅ 3. Remove from array
+    let updatedFavorites = (data.favorite || []).filter(m => m.id !== movieId);
+
+    // ✅ 4. Update row
+    const { error: updateError } = await supabase
+      .from("user-favorites")
+      .update({ favorite: updatedFavorites })
+      .eq("id", data.id);
+
+    if (updateError) throw updateError;
+
+  } catch (err) {
+    console.error("Delete error:", err);
+  }
+}
+    // Search functionality
+    function setupSearch() {
+      const searchBtn = document.getElementById('search-b');
+      const searchContainer = document.getElementById('searchContainer');
+      const movieResult = document.getElementById('movieResult');
+      
+      if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          searchContainer.style.display = 'grid';
+          movieResult.style.display = 'block';
+        });
+      }
+      
+      document.addEventListener('click', (event) => {
+        if (searchContainer && movieResult) {
+          if (!searchContainer.contains(event.target) && 
+              !movieResult.contains(event.target) && 
+              !searchBtn?.contains(event.target)) {
+            searchContainer.style.display = 'none';
+            movieResult.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    // Add clear history button
+    function addClearButton() {
+      const resultDiv = document.getElementById('result');
+      if (resultDiv && !document.getElementById('clearHistoryBtn')) {
+        const clearBtn = document.createElement('button');
+        clearBtn.id = 'clearHistoryBtn';
+        clearBtn.className = 'clear-history-btn';
+        clearBtn.innerHTML = '<i class="fas fa-trash"></i> Clear All History';
+        window.clearBtnE = clearBtn
+        clearBtn.onclick = () => window.clearAllHistory();
+        resultDiv.insertBefore(clearBtn, resultDiv.firstChild.nextSibling);
+      }
+    }
+
+const profile = async () =>{
+  document.querySelector(".section-title").innerHTML = "Profile"
+  if(window.clearBtnE){ window.clearBtnE.remove(); console.log("clear")}
+              document.getElementById('historyContainer').innerHTML = `
+<style>
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--brand-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: center;">
+  <div class="spinner"></div>
+</div>
+              `
+  const { data,error } = await supabase.auth.getSession();
+  if (error) {
+  popShow("session expired login please!", "EF4444","FEF2F2","errors",30000);
+  return;
+}
+const user = data?.session?.user;
+
+if (!user) {
+  popShow("not logged in", "EF4444","FEF2F2","errors",30000);
+  setTimeout (()=>{window.location.href="/home"},3000)
+  return;
+}
+  
+  
+              document.getElementById('historyContainer').innerHTML =`
+              <style>#profileUi {
+  background: #121212;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  min-width: 350px;
+  max-width: 600px;
+
+  display: grid;
+  gap: 6px;
+  padding: 20px;
+  font-family: system-ui, sans-serif;
+  font-size: 1.5rem;
+  color: #a0a0a0;
+  box-sizing: border-box;
+}
+
+#profileUi span {
+  font-size: 0.8rem;
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
+#profileUi input {
+  background: #1e1e1e;
+  width: 100%;
+  border: 1px solid #444444;
+  border-radius: 6px;
+  padding: 10px;
+  color: #ffffff;
+  box-sizing: border-box; /* Ensures padding doesn't break width */
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#profileUi input:focus {
+  border-color: #666666;
+}
+
+#profileUi p {
+  margin: 12px 0 0 0;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#profileUi p:hover {
+  text-decoration: underline;
+}#profileUi #logOut{
+  width: 80%;
+  display: flex;
+  justify-self: center;
+  background: linear-gradient(180deg, #ff4d4d 0%, #b30000 100%);
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+ justify-content:center; 
+ color: white;
+font-size:  1.2rem ;
+}
+
+</style>
+              <div id="profileUi">
+  <span>Email</span>
+  <input type="text" value="${user.email}" disabled>
+  
+  <span>Password</span>
+  <input type="text" value="*********" disabled/>
+  
+  <p>Change password</p>
+  <button id="logOut">
+    Sign out</button>
+</div>  
+
+              `
+              
+              document.getElementById("logOut").onclick = async ()=>{
+                await supabase.auth.signOut()
+                          popShow("logged out!","EF4444","FEF2F2","alert",3000)
+                window.location.href ="/home"
+              }
+  
+}
+    // Initialize everything when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTabs();
+      setupSearch();
+      loadHistory();
+      addClearButton();
+      
+      // Listen for storage events from other tabs
+      window.addEventListener('storage', (e) => {
+        if (e.key && e.newValue) {
+          loadHistory();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

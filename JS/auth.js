@@ -1,7 +1,7 @@
 import {popShow} from "/JS/home.js"
 
-import { AuthSetup } from "/JS/supabaseJS.js";
-
+import { AuthSetup} from "/JS/supabaseJS.js";
+import {supabase} from "/JS/supabaseJS.js"
 const Auth = new AuthSetup();
 
 export function auth(element) {
@@ -55,7 +55,11 @@ export function auth(element) {
     }
 
     // Open modal on click
-    element.onclick = () => {
+    element.onclick = async () => {
+      const { data } = await supabase.auth.getSession();
+if (data.session && !window.location.pathname.includes("/user")) {
+  window.location.href = "/user";
+}
         document.querySelector(".modal-overlay").style.display = "flex";
         document.head.appendChild(style);
     };
@@ -115,8 +119,8 @@ export function auth(element) {
             if (isLoginMode) {
                 const res = await Auth.signIn(email, password);
                 if (res.success) {
-                    popShow(`Login successful!`,"1ABC9C","fff","showSuc",3000)
-                    
+                    popShow(`Login successful!`,"1ABC9C","fff","showSuc",2000)
+                    setTimeout(()=>{window.location.href="/user"},1000)
                     document.querySelector('.modal-overlay').style.display = 'none';
                 } else {
                     popShow(`${res.error}`,"EF4444","FEF2F2","errors",3000)
@@ -130,7 +134,8 @@ export function auth(element) {
 
                 const res = await Auth.createUser(email, password);
                 if (res.success) {
-                    popShow(`<i class="fa-solid fa-circle-check" style="margin-right:5px;"></i> your account has been created!`,"1ABC9C","fff","showSuc",3000)
+                    popShow(`<i class="fa-solid fa-circle-check" style="margin-right:5px;"></i> your account has been created!`,"1ABC9C","fff","showSuc",2000)
+                                        setTimeout(()=>{window.location.href="/user"},1000)
                     document.querySelector('.modal-overlay').style.display = 'none';
                 } else {
                     popShow(res.error,"EF4444","FEF2F2","errors",3000)

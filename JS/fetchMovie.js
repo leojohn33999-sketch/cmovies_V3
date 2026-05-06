@@ -18,6 +18,23 @@ class FetchMovie {
         try {
             const res = await fetch(`${WORKER}?imdb=${this.movieId}`);
             const data = await res.json();
+    
+            const store = {
+            type: "stream",
+            id: data.id,  // or data.movieId depending on your response
+            title: data.title || data.results?.title || "Unknown",
+            embed: data.embed || `https://streamer-f4wx.onrender.com/proxy?url=${encodeURIComponent(data.url)}`,
+            embed2: data.embed2,
+            ccurl: data.ccurl,
+            info: data.results || data.info,
+            backdrop: data.backdrop_path || data.results?.backdrop_path,
+            similar: data.similar || [],
+            timestamp: Date.now()  // Add timestamp for sorting
+        };
+        
+        // Store in localforage
+        await localforage.setItem(store.id.toString(), store);
+        console.log('Stream saved to history:', store.title);
             this.identifyData(data);
             
         } catch (err) {
@@ -111,12 +128,29 @@ class streamUI {
 
 
     }
+    destroyPlayer() {
+  if (this.hls) {
+    this.hls.destroy();
+    this.hls = null;
+  }
+  
+  if (this.video) {
+    this.video.pause();
+    this.video.removeAttribute("src");
+    this.video.load();
+    this.video.replaceWith(video.cloneNode(true));
+    console.log("killed")
+  }
+
+  console.log("🔥 HLS fully destroyed");
+}
     async display(infOmdb, recommended) {
         console.log(infOmdb)
         const div = document.createElement("div");
         div.id = "whole-cointaner"
         div.innerHTML = `
-       
+          <div id="responsive-ui">
+          <div>
             <div id="wrap">
           ${this.videoUi}
     </div>
@@ -131,7 +165,7 @@ class streamUI {
                     </button>
                 </div>
             </div>
-
+</div>
             <div class="info_movie-card">
                 <div class="header">
                     <h1 class="info_h1">${this.movie.title}</h1>
@@ -154,7 +188,7 @@ class streamUI {
                     <div class="rating-text"><strong>${infOmdb[1].imdbRating || 'N/A'}</strong> of <strong>10</strong></div>
                 </div>
             </div>
-
+ </div
             <div class="recommendation-container">
                 <h2 class="section-title-liked">You may also like</h2>
                 <div class="scroll-wrapper">${recommended}</div>
@@ -182,7 +216,7 @@ class streamUI {
         document.body.appendChild(div);
 
         // --- Logic for Iframe Loader ---
-
+  if(localStorage.getItem("server") !== "server_2"){
           try {
             const module = await import("/UI/video.js");
             // Access the named export directly
@@ -193,7 +227,7 @@ class streamUI {
             );
         } catch (err) {
             console.error("Failed to load video player logic:", err);
-        }
+        }}
 
         const saveM = document.getElementById("saveM")
         saveM.onclick = async () => {
@@ -220,7 +254,9 @@ class streamUI {
         //run server change 
         var server = localStorage.getItem("server")
         if (server === "server_2") {
-            if (this.hls) hls.destroy ();
+if (window.currentPlayer) {
+  window.currentPlayer.destroyPlayer();
+}
             const video = document.querySelector(".video-main-stream");
             const controler = document.querySelector("#wrap")
 
@@ -295,7 +331,7 @@ class streamUI {
             this.serverChange(e)
         });
         document.getElementById("server_2").addEventListener("click", (e) => {
-            if(this.hls) hls.destroy ();
+            this.destroyPlayer()
             this.videoTapcount = 1
             this.serverChange(e)
         });
@@ -442,6 +478,8 @@ new Player(
             </div>
 
             `
+            if(this.hls) this.hls.destroy()
+            
             const iframe = document.getElementById("player");
             const backdrop = document.getElementById("iframe-backdrop");
 

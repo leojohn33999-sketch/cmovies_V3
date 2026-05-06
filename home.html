@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="5dddd6b5-d007-4b92-95d0-ab38614f24d3"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Movie Stream</title>
@@ -184,6 +183,127 @@
             width: 90%;
             margin: 0 auto;
         }
+        @media (min-width: 400px){
+                    #movies-recommended-rapper {
+                        grid-template-columns: repeat(3, 1fr);
+                    }
+        }        @media (min-width: 600px){
+                    #movies-recommended-rapper {
+                        grid-template-columns: repeat(4, 1fr);
+                    }
+        }
+                @media (min-width: 900px){
+                    #movies-recommended-rapper {
+                        grid-template-columns: repeat(5, 1fr);
+                    }
+        }
+/* --- Vertical Scroll Grid Containers --- */
+#movies-rapper, 
+#tv-rapper {
+    display: grid;
+    /* Responsive columns: auto-fills based on available width */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 20px;
+    
+    /* SCROLL LOGIC */
+    max-height: 500px;       /* Adjust this height to your liking */
+    overflow-y: auto;        /* Allows vertical scrolling */
+    overflow-x: hidden;      /* Prevents horizontal shaking/scrolling */
+    
+    /* Padding for the scrollbar and edges */
+    padding: 10px;
+    margin: 0 auto;
+    width: 95%;
+    
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
+}
+@media (min-width: 768px) {
+    #movies-rapper, 
+    #tv-rapper {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 25px;
+        max-height: 600px;
+    }
+}
+
+/* Desktop View */
+@media (min-width: 1024px) {
+    #movies-rapper, 
+    #tv-rapper {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 30px;
+        max-height: 700px;
+    }
+}
+
+/* Large Desktop View */
+@media (min-width: 1440px) {
+    #movies-rapper, 
+    #tv-rapper {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        max-height: 800px;
+    }
+}
+/* --- Professional Custom Scrollbar --- */
+/* This makes the vertical scrollbar look sleek instead of the default grey bar */
+#movies-rapper::-webkit-scrollbar,
+#tv-rapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+#movies-rapper::-webkit-scrollbar-track,
+#tv-rapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#movies-rapper::-webkit-scrollbar-thumb,
+#tv-rapper::-webkit-scrollbar-thumb {
+    background: var(--brand-red);
+    border-radius: 10px;
+}
+
+/* --- Movie Card Fixes --- */
+[data-scroll] .movie-card {
+    width: 100%; /* Grid handles the width */
+    transition: transform 0.2s ease;
+}
+
+[data-scroll] .poster-container {
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+/* --- Movie Card Enhancements --- */
+
+
+[data-scroll] .poster-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Metadata Typography --- */
+[data-scroll] .movie-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+    color: var(--text-white);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+[data-scroll] .meta-data {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
         .movie-card { display: flex; flex-direction: column; cursor: pointer; }
         .movie-card:active { transform: scale(0.96); transition: 0.1s; }
@@ -512,6 +632,17 @@
         <h2>Recommended For You</h2>
         <div id="movies-recommended-rapper"></div>
     </div>
+    <div id="movies">
+        <h2>movies </h2>
+                <div id="movies-rapper">
+                    
+                </div>
+    </div>
+        <div id="tvs">
+        <h2>tv & series's </h2>
+                <div id="tv-rapper">
+                     </div>
+    </div>
    <footer id="footer">
     <div id="request_info">
       <span>Request</span>
@@ -578,7 +709,7 @@
 
         async function fetchMovie() {
             try {
-                const res = await fetch("/JSON/trending.json");
+                const res = await fetch("https://home.1262sbmdj27dj.workers.dev/trending?type=week");
                 const data = await res.json();
                 const movies = data.results.slice(0, 10);
                 
